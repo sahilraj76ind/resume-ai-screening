@@ -1,0 +1,595 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ResumeAI — Smart Resume Screening</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="background-glow glow-one"></div>
+  <div class="background-glow glow-two"></div>
+
+  <!-- NAVBAR -->
+  <header class="topbar">
+
+    <a class="brand" href="#">
+      <span class="brand-mark">R</span>
+
+      <span>
+        Resume<span>AI</span>
+      </span>
+    </a>
+
+    <div class="topbar-badge">
+      AI Resume Screening
+    </div>
+
+  </header>
+
+
+  <main class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+
+      <div class="eyebrow">
+        <span class="pulse-dot"></span>
+        Intelligent candidate matching
+      </div>
+
+      <h1>
+        Find out how well a resume fits a job.
+      </h1>
+
+      <p>
+        Upload a resume and add a job description.
+        ResumeAI combines NLP-based matching with Gemini AI
+        to explain strengths, gaps and overall fit.
+      </p>
+
+    </section>
+
+
+    <!-- INPUT AREA -->
+    <form id="analyze-form" class="workspace">
+
+      <section class="input-grid">
+
+        <!-- RESUME -->
+        <article class="input-card">
+
+          <div class="card-heading">
+
+            <div>
+              <span class="step">01</span>
+
+              <h2>Upload resume</h2>
+
+              <p>
+                PDF, DOCX or TXT
+              </p>
+            </div>
+
+            <span class="file-icon">
+              ↑
+            </span>
+
+          </div>
+
+
+          <label
+            class="upload-zone"
+            id="resume-drop"
+            for="resume"
+          >
+
+            <div class="upload-icon">
+              ↥
+            </div>
+
+            <strong id="resume-filename">
+              Choose your resume
+            </strong>
+
+            <span>
+              or drag & drop it here
+            </span>
+
+          </label>
+
+
+          <input
+            type="file"
+            id="resume"
+            name="resume"
+            accept=".pdf,.docx,.txt"
+            required
+          >
+
+        </article>
+
+
+        <!-- JOB DESCRIPTION -->
+        <article class="input-card">
+
+          <div class="card-heading">
+
+            <div>
+              <span class="step">02</span>
+
+              <h2>
+                Job description
+              </h2>
+
+              <p>
+                Paste text or upload a file
+              </p>
+            </div>
+
+            <span class="file-icon">
+              ⌕
+            </span>
+
+          </div>
+
+
+          <textarea
+            id="job_description"
+            name="job_description"
+            placeholder="Paste the job description here..."
+          ></textarea>
+
+
+          <label
+            class="mini-upload"
+            id="jd-drop"
+            for="job_description_file"
+          >
+
+            <span>
+              ＋ Upload JD file
+            </span>
+
+            <strong id="jd-filename">
+              PDF, DOCX or TXT
+            </strong>
+
+          </label>
+
+
+          <input
+            type="file"
+            id="job_description_file"
+            name="job_description_file"
+            accept=".pdf,.docx,.txt"
+          >
+
+        </article>
+
+      </section>
+
+
+      <!-- ACTION -->
+      <div class="action-row">
+
+        <div class="privacy-note">
+          <span>🔒</span>
+
+          Resume text is processed for this analysis
+          and is not saved by this app.
+        </div>
+
+
+        <button
+          type="submit"
+          id="analyze-btn"
+        >
+
+          <span>
+            Analyze with AI
+          </span>
+
+          <span class="button-arrow">
+            →
+          </span>
+
+        </button>
+
+      </div>
+
+
+      <div
+        class="error"
+        id="error-message"
+        hidden
+      ></div>
+
+    </form>
+
+
+    <!-- LOADING -->
+    <section
+      class="loading-card"
+      id="loading"
+      hidden
+    >
+
+      <div class="loader"></div>
+
+      <div>
+
+        <strong>
+          Analyzing candidate...
+        </strong>
+
+        <p>
+          Extracting skills, comparing requirements
+          and asking Gemini for an evidence-based assessment.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- RESULTS -->
+    <section
+      class="results"
+      id="results"
+      hidden
+    >
+
+      <div class="results-top">
+
+        <div>
+
+          <div class="eyebrow">
+            Screening result
+          </div>
+
+          <h2>
+            Candidate fit overview
+          </h2>
+
+        </div>
+
+
+        <button
+          type="button"
+          class="secondary-btn"
+          id="download-btn"
+        >
+          ↓ Download report
+        </button>
+
+      </div>
+
+
+      <!-- SCORE CARDS -->
+      <div class="score-grid">
+
+        <!-- OVERALL SCORE -->
+        <article class="score-card main-score-card">
+
+          <div class="score-ring-wrap">
+
+            <svg
+              class="score-ring"
+              viewBox="0 0 120 120"
+            >
+
+              <circle
+                class="ring-track"
+                cx="60"
+                cy="60"
+                r="52"
+              ></circle>
+
+              <circle
+                class="ring-fill"
+                id="score-ring-fill"
+                cx="60"
+                cy="60"
+                r="52"
+              ></circle>
+
+            </svg>
+
+            <span
+              class="score-number"
+              id="score-number"
+            >
+              0%
+            </span>
+
+          </div>
+
+
+          <div>
+
+            <span class="metric-label">
+              Overall match
+            </span>
+
+            <h3 id="recommendation-label">
+              Analyzed
+            </h3>
+
+            <p>
+              Combines text similarity, required-skill
+              coverage and AI semantic relevance.
+            </p>
+
+          </div>
+
+        </article>
+
+
+        <!-- SKILL COVERAGE -->
+        <article class="metric-card">
+
+          <span class="metric-icon">
+            ✦
+          </span>
+
+          <span class="metric-label">
+            Skill coverage
+          </span>
+
+          <strong id="coverage-number">
+            0%
+          </strong>
+
+          <p>
+            <span id="matched-count">0</span>
+            of
+            <span id="jd-skill-total">0</span>
+            required skills found
+          </p>
+
+        </article>
+
+
+        <!-- AI SCORE -->
+        <article class="metric-card">
+
+          <span class="metric-icon">
+            AI
+          </span>
+
+          <span class="metric-label">
+            AI relevance
+          </span>
+
+          <strong id="ai-score">
+            0%
+          </strong>
+
+          <p>
+            Semantic assessment by Gemini
+          </p>
+
+        </article>
+
+      </div>
+
+
+      <!-- AI SUMMARY -->
+      <div class="ai-summary">
+
+        <div class="section-title">
+
+          <span class="section-kicker">
+            AI assessment
+          </span>
+
+          <h3>
+            Candidate assessment
+          </h3>
+
+        </div>
+
+
+        <p id="ai-summary"></p>
+
+
+        <div
+          class="recommendation-pill"
+          id="recommendation-pill"
+        >
+          —
+        </div>
+
+      </div>
+
+
+      <!-- STRENGTHS + GAPS -->
+      <div class="detail-grid">
+
+        <article class="detail-card">
+
+          <div class="section-title">
+
+            <span class="section-kicker good">
+              Strengths
+            </span>
+
+            <h3>
+              What stands out
+            </h3>
+
+          </div>
+
+
+          <ul
+            id="strengths-list"
+            class="insight-list"
+          ></ul>
+
+        </article>
+
+
+        <article class="detail-card">
+
+          <div class="section-title">
+
+            <span class="section-kicker bad">
+              Gaps
+            </span>
+
+            <h3>
+              What needs attention
+            </h3>
+
+          </div>
+
+
+          <ul
+            id="concerns-list"
+            class="insight-list"
+          ></ul>
+
+        </article>
+
+      </div>
+
+
+      <!-- SKILLS -->
+      <div class="skills-panel">
+
+        <div class="skills-column">
+
+          <div class="section-title">
+
+            <span class="section-kicker good">
+              Matched
+            </span>
+
+            <h3>
+              Required skills found
+            </h3>
+
+          </div>
+
+
+          <div
+            class="tag-list"
+            id="matched-skills"
+          ></div>
+
+        </div>
+
+
+        <div class="skills-column">
+
+          <div class="section-title">
+
+            <span class="section-kicker bad">
+              Missing
+            </span>
+
+            <h3>
+              Required skills not found
+            </h3>
+
+          </div>
+
+
+          <div
+            class="tag-list"
+            id="missing-skills"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- EVIDENCE -->
+      <div class="evidence-card">
+
+        <div class="section-title">
+
+          <span class="section-kicker">
+            Evidence
+          </span>
+
+          <h3>
+            Why the AI reached this conclusion
+          </h3>
+
+        </div>
+
+
+        <div
+          id="evidence-list"
+          class="evidence-list"
+        ></div>
+
+      </div>
+
+
+      <!-- DISCLAIMER -->
+      <div class="disclaimer">
+
+        <strong>
+          Screening aid, not a hiring decision.
+        </strong>
+
+        The score is based only on the supplied resume
+        and job description. AI may make mistakes, so a
+        human should review the original documents.
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <span>
+      ResumeAI
+    </span>
+
+    <span>
+      Local text extraction · Deterministic NLP · Gemini AI
+    </span>
+
+  </footer>
+
+
+  <!-- PDF.JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+
+  <!-- MAMMOTH -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+
+  <!-- JSPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+  <!-- OUR JS -->
+  <script src="skills.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
